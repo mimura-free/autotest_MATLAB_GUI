@@ -1,20 +1,18 @@
-name: Run MATLAB GUI App Tests on Windows and Ubuntu
+name: Run MATLAB Unit Tests
 
 on:
   push:
-    branches:
-      - main
-      - 'feature/**'
-      - 'develop'
-  workflow_dispatch:
+    paths:
+      - '**.m'
+      - '**.mlapp'
+      - '.github/workflows/matlabtest.yml'
 
 jobs:
   test:
-    name: MATLAB Tests (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [windows-latest, ubuntu-latest]
+        os: [ubuntu-latest, windows-latest]
 
     steps:
       - name: Checkout repository
@@ -23,23 +21,10 @@ jobs:
       - name: Set up MATLAB
         uses: matlab-actions/setup-matlab@v2
 
-      - name: Run MATLAB GUI App Tests
-        uses: matlab-actions/run-command@v2
+      - name: Run MATLAB Unit Tests
+        uses: matlab-actions/run-tests@v2
         with:
-          command: |
-            results = runtests('unittest', 'IncludeSubfolders', true, 'OutputDetail', 1, 'OutputFile', 'TestResults.xml');
-            disp(results);
-            assert(all([results.Passed]), 'Some tests failed.');
-
-      - name: Archive test results
-        if: always()
-        run: |
-          mkdir -p test-results
-          cp TestResults.xml test-results/ || true
-
-      - name: Upload test results
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: matlab-test-results-${{ matrix.os }}
-          path: test-results/
+          source-folder: .
+          test-folder: .
+          select-by-folder: false
+          test-results-junit: test-results/results.xml
