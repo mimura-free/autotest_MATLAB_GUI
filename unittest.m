@@ -9,8 +9,7 @@ classdef unittest < matlab.uitest.TestCase
 
             ax = app.UIAxes;                                % プロット用座標軸（UIAxes）を取得
             surfaceObj = ax.Children;                       % 座標軸上のグラフィックオブジェクト（サーフェス等）を取得
-            testCase.verifySize(surfaceObj.ZData,[12 12])   % サーフェスのZDataが12x12サイズか検証
-            1/a
+            testCase.verifySize(surfaceObj.ZData,[12 13])   % サーフェスのZDataが12x12サイズか検証
         end
 
         function testColormap(testCase)
